@@ -2,3 +2,4 @@
 dist/*
 coverage/*
 karma.conf.js
+extension/mercury.web.js

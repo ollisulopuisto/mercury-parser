@@ -1,7 +1,7 @@
 {
-  "name": "@postlight/parser",
+  "name": "selkokieli",
   "version": "2.2.3",
-  "description": "Postlight Parser transforms web pages into clean text. Publishers and programmers use it to make the web make sense, and readers use it to read any web article comfortably.",
+  "description": "Selkokieli Parser transforms web pages into clean text. Publishers and programmers use it to make the web make sense, and readers use it to read any web article comfortably.",
   "author": "Postlight <mercury@postlight.com>",
   "homepage": "https://reader.postlight.com",
   "license": "MIT",
@@ -26,6 +26,7 @@
   ],
   "main": "./dist/mercury.js",
   "bin": {
+    "selkokieli": "./cli.js",
     "mercury-parser": "./cli.js",
     "postlight-parser": "./cli.js"
   },
@@ -39,6 +40,7 @@
     "build:esm": "yarn lint && rollup -c rollup.config.esm.js && yarn test:build:esm",
     "build:esm:ci": "rollup -c rollup.config.esm.js && yarn test:build:esm",
     "build:web:ci": "rollup -c rollup.config.web.js && yarn test:build:web",
+    "build:extension": "rollup -c rollup.config.web.js && cp dist/mercury.web.js extension/mercury.web.js",
     "release": "yarn build && yarn build:web",
     "build:generator": "rollup -c scripts/rollup.config.js",
     "test_build": "rollup -c",

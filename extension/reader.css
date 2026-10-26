@@ -1,0 +1,146 @@
+html.selkokieli-active {
+  overflow: hidden !important;
+}
+
+#selkokieli-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  overflow-y: auto !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif !important;
+  color: #1a1a1a !important;
+  line-height: 1.7 !important;
+}
+
+.selkokieli-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(20, 20, 20, 0.7) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.selkokieli-modal {
+  position: relative !important;
+  background: #fbfbfb !important;
+  color: #222 !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 40px 20px !important;
+  padding: 48px 56px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25) !important;
+  box-sizing: border-box !important;
+}
+
+.selkokieli-toolbar {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-bottom: 24px !important;
+}
+
+.selkokieli-close-btn {
+  background: #eaeaea !important;
+  color: #333 !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: background 0.15s ease !important;
+}
+
+.selkokieli-close-btn:hover {
+  background: #dcdcdc !important;
+}
+
+.selkokieli-header {
+  margin-bottom: 32px !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+  padding-bottom: 24px !important;
+}
+
+.selkokieli-domain {
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #666 !important;
+  margin-bottom: 8px !important;
+  font-weight: 600 !important;
+}
+
+.selkokieli-title {
+  font-size: 32px !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  margin: 0 0 16px 0 !important;
+  color: #111 !important;
+}
+
+.selkokieli-meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  font-size: 14px !important;
+  color: #666 !important;
+}
+
+.selkokieli-author {
+  font-weight: 600 !important;
+}
+
+.selkokieli-lead-image-wrap {
+  margin: 24px 0 32px 0 !important;
+}
+
+.selkokieli-lead-image {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  display: block !important;
+}
+
+.selkokieli-content {
+  font-size: 18px !important;
+  line-height: 1.8 !important;
+  color: #2b2b2b !important;
+}
+
+.selkokieli-content p {
+  margin: 1.4em 0 !important;
+}
+
+.selkokieli-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  margin: 1.5em 0 !important;
+}
+
+.selkokieli-content a {
+  color: #1a66cc !important;
+  text-decoration: underline !important;
+}
+
+.selkokieli-content h1,
+.selkokieli-content h2,
+.selkokieli-content h3,
+.selkokieli-content h4 {
+  color: #111 !important;
+  margin-top: 1.8em !important;
+  margin-bottom: 0.6em !important;
+  line-height: 1.3 !important;
+}
+
+.selkokieli-content blockquote {
+  border-left: 4px solid #1a66cc !important;
+  padding-left: 16px !important;
+  margin-left: 0 !important;
+  color: #555 !important;
+  font-style: italic !important;
+}

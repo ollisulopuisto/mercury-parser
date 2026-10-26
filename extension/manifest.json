@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Selkokieli",
+  "version": "1.0.0",
+  "description": "Lue artikkeleita ilman häiriötekijöitä – muuntaa verkkosivut puhtaaksi tekstiksi Selkokieli-parserilla.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_title": "Avaa Selkokieli-lukutila"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
