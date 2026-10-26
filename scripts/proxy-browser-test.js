@@ -4,29 +4,22 @@ const request = require('request');
 const app = express();
 let server;
 
+const ALLOWED_URLS = [
+  'http://www.cnn.com/2016/11/05/middleeast/iraq-mosul-isis-offensive/',
+  'https://www.cnn.com/2019/01/30/politics/trump-intel-chiefs-foreign-policy-iran-isis-north-korea/index.html',
+];
+
 const start = () => {
   app.use('/:url', (req, res) => {
     const url = req.originalUrl.slice(1);
-    let safeUrl;
+    const targetUrl = ALLOWED_URLS.find(allowed => allowed === url);
 
-    try {
-      const parsedUrl = new URL(url);
-      const isAllowedHost =
-        parsedUrl.hostname === 'www.cnn.com' || parsedUrl.hostname === 'cnn.com';
-      const isAllowedProtocol =
-        parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:';
-
-      if (!isAllowedHost || !isAllowedProtocol) {
-        return res.status(400).send('Bad Request');
-      }
-
-      safeUrl = parsedUrl.toString();
-    } catch (e) {
+    if (!targetUrl) {
       return res.status(400).send('Bad Request');
     }
 
     const options = {
-      url: safeUrl,
+      url: targetUrl,
       // Don't set encoding; fixes issues
       // w/gzipped responses
       encoding: null,
@@ -34,8 +27,8 @@ const start = () => {
       jar: true,
       // Accept and decode gzip
       gzip: true,
-      // Do not follow redirects to avoid SSRF via redirect targets
-      followAllRedirects: false,
+      // Follow any redirect
+      followAllRedirects: true,
     };
     return req.pipe(request(options)).pipe(res);
   });
