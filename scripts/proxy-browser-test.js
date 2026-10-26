@@ -4,23 +4,22 @@ const request = require('request');
 const app = express();
 let server;
 
+const ALLOWED_URLS = [
+  'http://www.cnn.com/2016/11/05/middleeast/iraq-mosul-isis-offensive/',
+  'https://www.cnn.com/2019/01/30/politics/trump-intel-chiefs-foreign-policy-iran-isis-north-korea/index.html',
+];
+
 const start = () => {
   app.use('/:url', (req, res) => {
     const url = req.originalUrl.slice(1);
+    const targetUrl = ALLOWED_URLS.find(allowed => allowed === url);
 
-    try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-        res.status(400).send('Invalid protocol');
-        return;
-      }
-    } catch (e) {
-      res.status(400).send('Invalid URL');
-      return;
+    if (!targetUrl) {
+      return res.status(400).send('Bad Request');
     }
 
     const options = {
-      url,
+      url: targetUrl,
       // Don't set encoding; fixes issues
       // w/gzipped responses
       encoding: null,
@@ -31,7 +30,7 @@ const start = () => {
       // Follow any redirect
       followAllRedirects: true,
     };
-    req.pipe(request(options)).pipe(res);
+    return req.pipe(request(options)).pipe(res);
   });
   server = app.listen(process.env.PORT || 3000);
 };
