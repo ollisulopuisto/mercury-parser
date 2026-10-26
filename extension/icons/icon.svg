@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient: Deep Nordic Indigo -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="60%" stop-color="#172554" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Card Shadow -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+
+    <!-- Subtle inner border gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Background Squircle -->
+  <rect x="32" y="32" width="448" height="448" rx="108" fill="url(#bgGrad)" />
+  <rect x="32" y="32" width="448" height="448" rx="108" fill="none" stroke="url(#borderGrad)" stroke-width="3" />
+
+  <!-- 2. Reading Card with Shadow -->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="100" width="312" height="312" rx="26" fill="#f8fafc" />
+  </g>
+
+  <!-- 3. Ribbon Bookmark -->
+  <path d="M 338 100 L 374 100 L 374 154 L 356 142 L 338 154 Z" fill="#0284c7" />
+
+  <!-- 4. Typography: Serif 'S' for Selkokieli -->
+  <text x="142" y="278" font-family="Georgia, serif" font-size="165" font-weight="bold" fill="#0f172a">S</text>
+
+  <!-- 5. Reading Lines (Clarity / Distilled Text) -->
+  <g fill="#94a3b8">
+    <rect x="252" y="196" width="124" height="10" rx="5" />
+    <rect x="252" y="228" width="140" height="10" rx="5" />
+    <rect x="252" y="260" width="96" height="10" rx="5" />
+    <rect x="252" y="292" width="118" height="10" rx="5" />
+  </g>
+
+  <!-- Bottom divider line -->
+  <rect x="142" y="356" width="228" height="7" rx="3.5" fill="#e2e8f0" />
+</svg>
