@@ -8,8 +8,18 @@ const start = () => {
   app.use('/:url', (req, res) => {
     const url = req.originalUrl.slice(1);
 
+    const allowedUrls = [
+      'http://www.cnn.com/2016/11/05/middleeast/iraq-mosul-isis-offensive/',
+      'https://www.cnn.com/2019/01/30/politics/trump-intel-chiefs-foreign-policy-iran-isis-north-korea/index.html',
+    ];
+
+    if (!allowedUrls.includes(url)) {
+      return res.status(403).send('Forbidden');
+    }
+
     const options = {
       url,
+
       // Don't set encoding; fixes issues
       // w/gzipped responses
       encoding: null,
@@ -20,7 +30,7 @@ const start = () => {
       // Follow any redirect
       followAllRedirects: true,
     };
-    req.pipe(request(options)).pipe(res);
+    return req.pipe(request(options)).pipe(res);
   });
   server = app.listen(process.env.PORT || 3000);
 };
