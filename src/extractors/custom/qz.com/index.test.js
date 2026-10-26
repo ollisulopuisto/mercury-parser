@@ -14,8 +14,8 @@ describe('QzComExtractor', () => {
     let url;
     beforeAll(() => {
       url =
-        'http://qz.com/863015/uber-is-rolling-out-self-driving-cars-in-san-francisco-in-open-defiance-of-california-dmv/';
-      const html = fs.readFileSync('./fixtures/qz.com/1481758330660.html');
+        'https://qz.com/africa/1807355/nigerias-economy-has-best-quarterly-growth-since-recession/';
+      const html = fs.readFileSync('./fixtures/qz.com.html');
       result = Mercury.parse(url, { html, fallback: false });
     });
 
@@ -36,22 +36,21 @@ describe('QzComExtractor', () => {
       // the article.
       assert.equal(
         title,
-        'Uber is launching self-driving cars in San Francisco the same way it does everything—without permission'
+        'Nigeria’s economy is making a comeback—but it’s still not happening fast enough'
       );
     });
 
-    it('returns the author', async () => {
-      // To pass this test, fill out the author selector
-      // in ./src/extractors/custom/qz.com/index.js.
-      const { author } = await result;
+    // Author is no longer being returned in meta tag and there is no consistent selector for author byline (confirmed by viewing several articles)
+    // it('returns the author', async () => {
+    //   // To pass this test, fill out the author selector
+    //   // in ./src/extractors/custom/qz.com/index.js.
+    //   const { author } = await result;
 
-      // Update these values with the expected values from
-      // the article.
-      assert.equal(author, 'Alison Griswold');
-    });
+    //   // Update these values with the expected values from
+    //   // the article.
+    //   assert.equal(author, 'Yomi Kazeem');
+    // });
 
-    // qz doesn't appear to pass the date from the server,
-    // so the date is unfortunately null
     it('returns the date_published', async () => {
       // To pass this test, fill out the date_published selector
       // in ./src/extractors/custom/qz.com/index.js.
@@ -59,7 +58,7 @@ describe('QzComExtractor', () => {
 
       // Update these values with the expected values from
       // the article.
-      assert.equal(date_published, null);
+      assert.equal(date_published, '2020-02-24T16:26:29.000Z');
     });
 
     it('returns the lead_image_url', async () => {
@@ -71,7 +70,7 @@ describe('QzComExtractor', () => {
       // the article.
       assert.equal(
         lead_image_url,
-        'https://qzprod.files.wordpress.com/2016/12/uber-self-driving-volvo-sf-e1481735810897.jpg?quality=80&strip=all&w=1600'
+        'https://i.kinja-img.com/gawker-media/image/upload/q_75,w_1200,h_630,c_fill/e88c932321f288c23cf86931e591aa71.JPG'
       );
     });
 
@@ -95,7 +94,7 @@ describe('QzComExtractor', () => {
       // the article.
       assert.equal(
         first13,
-        'One of the Volvo XC90s Uber is debuting in San Francisco. (Uber) No'
+        'Since suffering a recession and full year of negative growth in 2016, Nigeria,'
       );
     });
   });

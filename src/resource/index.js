@@ -12,7 +12,8 @@ const Resource = {
   // :param response: If set, use as the response rather than
   //                  attempting to fetch it ourselves. Expects a
   //                  string.
-  async create(url, preparedResponse, parsedUrl) {
+  // :param headers: Custom headers to be included in the request
+  async create(url, preparedResponse, parsedUrl, headers = {}) {
     let result;
 
     if (preparedResponse) {
@@ -25,9 +26,13 @@ const Resource = {
         },
       };
 
-      result = { body: preparedResponse, response: validResponse };
+      result = {
+        body: preparedResponse,
+        response: validResponse,
+        alreadyDecoded: true,
+      };
     } else {
-      result = await fetchResource(url, parsedUrl);
+      result = await fetchResource(url, parsedUrl, headers);
     }
 
     if (result.error) {
@@ -38,8 +43,8 @@ const Resource = {
     return this.generateDoc(result);
   },
 
-  generateDoc({ body: content, response }) {
-    const { 'content-type': contentType } = response.headers;
+  generateDoc({ body: content, response, alreadyDecoded = false }) {
+    const { 'content-type': contentType = '' } = response.headers;
 
     // TODO: Implement is_text function from
     // https://github.com/ReadabilityHoldings/readability/blob/8dc89613241d04741ebd42fa9fa7df1b1d746303/readability/utils/text.py#L57
@@ -47,7 +52,7 @@ const Resource = {
       throw new Error('Content does not appear to be text.');
     }
 
-    let $ = this.encodeDoc({ content, contentType });
+    let $ = this.encodeDoc({ content, contentType, alreadyDecoded });
 
     if ($.root().children().length === 0) {
       throw new Error('No children, likely a bad parse.');
@@ -60,11 +65,14 @@ const Resource = {
     return $;
   },
 
-  encodeDoc({ content, contentType }) {
+  encodeDoc({ content, contentType, alreadyDecoded = false }) {
+    if (alreadyDecoded) {
+      return cheerio.load(content);
+    }
+
     const encoding = getEncoding(contentType);
     let decodedContent = iconv.decode(content, encoding);
     let $ = cheerio.load(decodedContent);
-
     // after first cheerio.load, check to see if encoding matches
     const contentTypeSelector = cheerio.browser
       ? 'meta[http-equiv=content-type]'

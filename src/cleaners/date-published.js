@@ -9,6 +9,8 @@ import {
   SEC_DATE_STRING,
   CLEAN_DATE_STRING_RE,
   SPLIT_DATE_STRING,
+  TIME_AGO_STRING,
+  TIME_NOW_STRING,
   TIME_MERIDIAN_SPACE_RE,
   TIME_MERIDIAN_DOTS_RE,
   TIME_WITH_OFFSET_RE,
@@ -28,6 +30,15 @@ export function createDate(dateString, timezone, format) {
     return moment(new Date(dateString));
   }
 
+  if (TIME_AGO_STRING.test(dateString)) {
+    const fragments = TIME_AGO_STRING.exec(dateString);
+    return moment().subtract(fragments[1], fragments[2]);
+  }
+
+  if (TIME_NOW_STRING.test(dateString)) {
+    return moment();
+  }
+
   return timezone
     ? moment.tz(dateString, format || parseFormat(dateString), timezone)
     : moment(dateString, format || parseFormat(dateString));
@@ -40,8 +51,11 @@ export default function cleanDatePublished(
   { timezone, format } = {}
 ) {
   // If string is in milliseconds or seconds, convert to int and return
-  if (MS_DATE_STRING.test(dateString) || SEC_DATE_STRING.test(dateString)) {
+  if (MS_DATE_STRING.test(dateString)) {
     return new Date(parseInt(dateString, 10)).toISOString();
+  }
+  if (SEC_DATE_STRING.test(dateString)) {
+    return new Date(parseInt(dateString, 10) * 1000).toISOString();
   }
 
   let date = createDate(dateString, timezone, format);

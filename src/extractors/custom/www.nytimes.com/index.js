@@ -2,15 +2,26 @@ export const NYTimesExtractor = {
   domain: 'www.nytimes.com',
 
   title: {
-    selectors: ['h1.g-headline', 'h1[itemprop="headline"]', 'h1.headline'],
+    selectors: [
+      'h1[data-testid="headline"]',
+      'h1.g-headline',
+      'h1[itemprop="headline"]',
+      'h1.headline',
+      'h1 .balancedHeadline',
+    ],
   },
 
   author: {
-    selectors: [['meta[name="author"]', 'value'], '.g-byline', '.byline'],
+    selectors: [
+      ['meta[name="author"]', 'value'],
+      '.g-byline',
+      '.byline',
+      ['meta[name="byl"]', 'value'],
+    ],
   },
 
   content: {
-    selectors: ['div.g-blocks', 'article#story'],
+    selectors: ['div.g-blocks', 'section[name="articleBody"]', 'article#story'],
 
     transforms: {
       'img.g-lazy': $node => {
@@ -39,7 +50,10 @@ export const NYTimesExtractor = {
   },
 
   date_published: {
-    selectors: [['meta[name="article:published"]', 'value']],
+    selectors: [
+      ['meta[name="article:published_time"]', 'value'],
+      ['meta[name="article:published"]', 'value'],
+    ],
   },
 
   lead_image_url: {

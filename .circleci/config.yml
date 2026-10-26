@@ -1,36 +1,37 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/project
   docker:
-    - image: circleci/node:8.10-browsers
+    - image: circleci/node:12.8.1-browsers
 
 jobs:
   test-node:
     <<: *defaults
     steps:
       - checkout
-      # For some reason phantomjs-prebuild is failing w/yarn, but npm installing works
-      - run: 'npm install phantomjs-prebuilt'
       - run: 'yarn install'
       - run: 'yarn lint:ci'
       - run: 'yarn build:ci'
       - run: 'yarn test:node --maxWorkers=4'
-      - run: './scripts/pr-parser-preview.sh'
+      - run:
+          name: Parser Preview
+          command: ./scripts/pr-parser-preview.sh
+          when: always
+
       - store_artifacts:
           path: tmp/artifacts
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/project
           paths: .
 
   test-web:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/project
       - checkout
       - run: 'yarn install'
-      - run: 'yarn add karma-cli --dev'
       - run: 'yarn test:web --maxWorkers=4'
       - run: 'yarn build:web:ci --maxWorkers=4'
 
@@ -38,17 +39,17 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/project
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/project/.npmrc
       - run:
           name: Publish package
           command: npm publish --access public
 
   update-fixtures:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:12.8.1
     steps:
       - checkout
       - run: 'yarn install'
@@ -59,13 +60,13 @@ workflows:
   build_and_test:
     jobs:
       - test-node:
-          filters:  # required since `deploy` has tag filters AND requires `test-node`
+          filters: # required since `deploy` has tag filters AND requires `test-node`
             branches:
               only: /.*/
             tags:
               only: /.*/
       - test-web:
-          filters:  # required since `deploy` has tag filters AND requires `test-web`
+          filters: # required since `deploy` has tag filters AND requires `test-web`
             branches:
               only: /.*/
             tags:

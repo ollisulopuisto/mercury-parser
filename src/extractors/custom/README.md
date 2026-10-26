@@ -1,12 +1,12 @@
 # Custom Parsers
 
-Mercury can extract meaningful content from almost any web site, but custom parsers/extractors allow the Mercury Parser to find the content more quickly and more accurately than it might otherwise do. Our goal is to include custom parsers as many sites as we can, and we'd love your help!
+Postlight Parser can extract meaningful content from almost any web site, but custom parsers/extractors allow the Postlight Parser to find the content more quickly and more accurately than it might otherwise do. Our goal is to include custom parsers as many sites as we can, and we'd love your help!
 
 ## The basics of parsing a site with a custom parser
 
 Custom parsers allow you to write CSS selectors that will find the content you're looking for on the page you're testing against. If you've written any CSS or jQuery, CSS selectors should be very familiar to you.
 
-You can query for every field returned by the Mercury Parser:
+You can query for every field returned by the Postlight Parser:
 
 - `title`
 - `author`
@@ -39,11 +39,11 @@ export const ExampleExtractor = {
     ...
 ```
 
-As you might guess, the selectors key provides an array of selectors that Mercury will check to find your title text. In our `ExampleExtractor`, we're saying that the title can be found in the text of an `h1` header with a class name of `hed`.
+As you might guess, the selectors key provides an array of selectors that Postlight Parser will check to find your title text. In our `ExampleExtractor`, we're saying that the title can be found in the text of an `h1` header with a class name of `hed`.
 
-The selector you choose should return one element. If more than one element is returned by your selector, it will fail (and Mercury will fall back to its generic extractor).
+The selector you choose should return one element. If more than one element is returned by your selector, it will fail (and Parser will fall back to its generic extractor).
 
-Because the `selectors` property returns an array, you to write more than one selector for a property extractor. This is particularly useful for sites that have multiple templates for articles. If you provide an array of selectors, Mercury will try each in order, falling back to the next until it finds a match or exhausts the options (in which case it will fall back to its default generic extractor).
+Because the `selectors` property returns an array, you can write more than one selector for a property extractor. This is particularly useful for sites that have multiple templates for articles. If you provide an array of selectors, Parser will try each in order, falling back to the next until it finds a match or exhausts the options (in which case it will fall back to its default generic extractor).
 
 #### Selecting an attribute
 
@@ -71,7 +71,50 @@ export const ExampleExtractor = {
     ...
 ```
 
-This is all you'll need to know to handle most of the fields Mercury parses (titles, authors, date published, etc.). Article content is the exception.
+This is all you'll need to know to handle most of the fields Parser parses (titles, authors, date published, etc.). Article content is the exception.
+
+#### Content selectors
+
+If you pass an array selector for the content selection, it behaves differently from the attribute selectors on other types. In such cases, it will be considered as a multi-match selection, which allows the parser to choose several selectors to include in the result, and will include all occurrences of each matching selector in the result.
+
+Note that all selectors in the array must match in order for this selector to trigger.
+
+```javascript
+export const ExampleExtractor = {
+    ...
+
+    // Attempt to match both the content and image
+    // before falling back to just the content
+    content: {
+      selectors: [
+        ['.parsys.content', '.__image-lead__'],
+        '.content'
+      ],
+    },
+
+    ...
+```
+
+### Custom types
+
+To add a custom key to the response, add an `extend` object. The response will include
+results for each key of this object (`categories` in the example below). Setting
+`allowMultiple` to `true` means Parser will find all the content that matches the
+selectors, and will always return an array of results for that key.
+
+```javascript
+export const ExampleExtractorWithExtend = {
+    ...
+
+    extend: {
+      categories: {
+        selectors: ['.post-taglist a'],
+        allowMultiple: true,
+      }
+    },
+
+    ...
+```
 
 ### Cleaning content from an article
 
@@ -144,7 +187,7 @@ export const ExampleExtractor = {
   },
 ```
 
-For much more complex tranforms, you can perform dom manipulation within the tranform function, but this is discouraged unless absolutely necessary. See, for example, the lazy-loaded image transform in [the NYTimesExtractor](www.nytimes.com/index.js#L25), which transforms the `src` attribute on the lazy-loaded image.
+For much more complex tranforms, you can perform dom manipulation within the tranform function, but this is discouraged unless absolutely necessary. See, for example, the lazy-loaded image transform in [the NYTimesExtractor](www.nytimes.com/index.js#L15), which transforms the `src` attribute on the lazy-loaded image.
 
 ## How to generate a custom parser
 
@@ -152,12 +195,12 @@ Now that you know the basics of how custom extractors work, let's walk through t
 
 ### Step 0: Installation
 
-First, you'll need to clone the Mercury Parser repository and install dependencies.
+First, you'll need to clone the Postlight Parser repository and install dependencies.
 
 ```bash
-git clone git@github.com:postlight/mercury-parser.git
+git clone git@github.com:postlight/parser.git
 
-cd mercury-parser
+cd parser
 
 yarn install
 ```
@@ -206,13 +249,11 @@ By default, the first test, which ensures your custom extractor is being selecte
 it('returns the title', async () => {
   // To pass this test, fill out the title selector
   // in ./src/extractors/custom/www.newyorker.com/index.js.
-  const html = fs.readFileSync(
-    './fixtures/www.newyorker.com/1475245895852.html'
-  );
+  const html = fs.readFileSync('./fixtures/www.newyorker.com.html');
   const articleUrl =
     'http://www.newyorker.com/tech/elements/hacking-cryptography-and-the-countdown-to-quantum-computing';
 
-  const { title } = await Mercury.parse(articleUrl, html, { fallback: false });
+  const { title } = await Parser.parse(articleUrl, { html, fallback: false });
 
   // Update these values with the expected values from
   // the article.
@@ -220,9 +261,9 @@ it('returns the title', async () => {
 });
 ```
 
-As you can see, to pass this test, we need to fill out our title selector. In order to do this, you need to know what your selector is. To do this, open the html fixture the generator downloaded for you in the [`fixtures`](/fixtures) directory. In our example, that file is `fixtures/www.newyorker.com/1475248565793.html`. Now open that file in your web browser.
+As you can see, to pass this test, we need to fill out our title selector. In order to do this, you need to know what your selector is. To do this, open the html fixture the generator downloaded for you in the [`fixtures`](/fixtures) directory. In our example, that file is `fixtures/www.newyorker.com.html`. Now open that file in your web browser.
 
-The page should look more or less exactly like the site you pointed it to, but this version is downloaded locally for test purposes. (You should always look for selectors using this local fixture rather than the actual web site; some sites re-write elements after the page loads, and we want to make sure we're looking at the page the same way Mercury will be.)
+The page should look more or less exactly like the site you pointed it to, but this version is downloaded locally for test purposes. (You should always look for selectors using this local fixture rather than the actual web site; some sites re-write elements after the page loads, and we want to make sure we're looking at the page the same way Postlight Parser will be.)
 
 (For the purpose of this guide, we're going to assume you're using Chrome as your default browser; any browser should do, but we're going to refer specifically to Chrome's developer tools in this guide.)
 
@@ -259,7 +300,7 @@ AssertionError: 'Hacking, Cryptography, and the Countdown to Quantum Computing' 
   'Schrödinger’s Hack';
 ```
 
-When Mercury generated our test, it took a guess at the page's title, and in this case, it got it wrong. So update the test with the title we expect, save it, and your test should pass!
+When Parser generated our test, it took a guess at the page's title, and in this case, it got it wrong. So update the test with the title we expect, save it, and your test should pass!
 
 ### Step 3: Speed it up
 
@@ -285,11 +326,13 @@ As [explained above](#selecting-an-attribute), to return an attribute rather tha
   ...
 ```
 
+In rare circumstances, you may want to manipulate the result of the attribute value. In these cases, you can add a third element to the selector array above — a function that will take the value of the attribute and return a value you've transformed it to. E.g., imagine that you want to access a JSON value that's been stringified into an attribute. Your function could take the stringified JSON, parse it, and return just the piece of it you want.
+
 You can refer to the [NewYorkerExtractor](www.newyorker.com/index.js) to see more the rest of the basic selectors.
 
 ### Step 4: Content extraction
 
-I've left content extraction for last, since it's often the trickiest, sometimes requiring special passes to [clean](#cleaning-content) and [transform](#using-tranforms) the content. For the New Yorker, the first part is easy: The selector for this page is clearly `div#articleBody`. But that's just our first step, because unlike the other tests, where we want to make sure we're matching a simple string, we need to sanity check that the page looks good when it's rendered, and that there aren't any elements returned by our selector that we don't want.
+I've left content extraction for last, since it's often the trickiest, sometimes requiring special passes to [clean](#cleaning-content-from-an-article) and [transform](#using-transforms) the content. For the New Yorker, the first part is easy: The selector for this page is clearly `div#articleBody`. But that's just our first step, because unlike the other tests, where we want to make sure we're matching a simple string, we need to sanity check that the page looks good when it's rendered, and that there aren't any elements returned by our selector that we don't want.
 
 To aid you in previewing the results, you can run the `./preview` script to see what the title and content output look like. So, after you've chosen your selector, run the preview script on the URL you're testing:
 
@@ -297,10 +340,69 @@ To aid you in previewing the results, you can run the `./preview` script to see 
 ./preview http://www.newyorker.com/tech/elements/hacking-cryptography-and-the-countdown-to-quantum-computing
 ```
 
-This script will open both an `html` and `json` file allowing you to preview your results. Luckily for us, the New Yorker content is simple, and doesn't require any unusual cleaning or transformations — at least not in this example. Remember that if you do see content that needs cleaned or transformed in the selected content, you can follow the instructions in the [clean](#cleaning-content) and [transform](#using-tranforms) sections above.
+This script will open both an `html` and `json` file allowing you to preview your results. Luckily for us, the New Yorker content is simple, and doesn't require any unusual cleaning or transformations — at least not in this example. Remember that if you do see content that needs cleaned or transformed in the selected content, you can follow the instructions in the [clean](#cleaning-content-from-an-article) and [transform](#using-transforms) sections above.
 
 ## Submitting a custom extractor
 
 If you've written a custom extractor, please send us a pull request! Passing tests that demonstrate your parser in action will help us evaluate the parser.
 
 Sometimes you may find that the site you're parsing doesn't provide certain information. For example, some sites don't have deks, and in those instances, you don't need to write a selector for that field. If there's a test for a selector you don't need, you can just remove that test and make note of it in your pull request.
+
+---
+
+## Adding Custom Extractor via API
+
+As of **version 2.1.1**, you can additionally add custom private extractors via API. Make sure that your custom extractor includes a domain name. Note that extractors added via API will take precedence over the packaged custom extractors.
+
+```javascript
+const customExtractor = {
+  domain: 'www.sandiegouniontribune.com',
+  title: {
+    selectors: ['h1', '.ArticlePage-headline'],
+  },
+  author: {
+    selectors: ['.ArticlePage-authorInfo-bio-name'],
+  },
+  content: {
+    selectors: ['article'],
+  },
+};
+
+Parser.addExtractor(customExtractor);
+```
+
+---
+
+## Passing custom extractor to addExtractor via CLI
+
+It's also possible to add a custom parser at runtime via the CLI.
+
+### 1. Create your custom extractor in a standalone file.
+
+```javascript
+var customExtractor = {
+  domain: 'postlight.com',
+  title: {
+    selectors: ['h1'],
+  },
+  author: {
+    selectors: ['.byline-name'],
+  },
+  content: {
+    selectors: ['article'],
+  },
+  extend: {
+    uniqueKeyFromFixture: {
+      selectors: ['.single__hero-category'],
+    },
+  },
+};
+
+module.exports = customExtractor;
+```
+
+### 2. From the CLI, add the `--add-extractor` param:
+
+```bash
+postlight-parser https://postlight.com/trackchanges/mercury-goes-open-source --add-extractor ./src/extractors/fixtures/postlight.com/index.js
+```

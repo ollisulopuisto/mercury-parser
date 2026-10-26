@@ -16,7 +16,6 @@ export default async function collectAllPages({
   // At this point, we've fetched just the first page
   let pages = 1;
   const previousUrls = [removeAnchor(url)];
-
   // If we've gone over 26 pages, something has
   // likely gone wrong.
   while (next_page_url && pages < 26) {
@@ -30,7 +29,6 @@ export default async function collectAllPages({
       html,
       $,
       metaCache,
-      contentOnly: true,
       extractedTitle: title,
       previousUrls,
     };
@@ -55,7 +53,7 @@ export default async function collectAllPages({
   return {
     ...result,
     total_pages: pages,
-    pages_rendered: pages,
+    rendered_pages: pages,
     word_count,
   };
 }

@@ -44,7 +44,8 @@ describe('cleanBySelectors($content, $, { clean })', () => {
           <p>This is some good content</p>
           <div class="ad">Advertisement!</div>
         </div>
-    </div>`;
+      </div>
+    `;
     const $ = cheerio.load(html);
 
     let $content = $('.body');
@@ -58,13 +59,13 @@ describe('cleanBySelectors($content, $, { clean })', () => {
 describe('transformElements($content, $, { transforms })', () => {
   it('performs a simple transformation on matched elements', () => {
     const html = `
-    <div>
-      <div class="body">
-        <h1>WOW BIG TITLE</h1>
-        <p>Here are some words</p>
-        <h1>WOW BIG TITLE</h1>
+      <div>
+        <div class="body">
+          <h1>WOW BIG TITLE</h1>
+          <p>Here are some words</p>
+          <h1>WOW BIG TITLE</h1>
+        </div>
       </div>
-    </div>
     `;
     const opts = {
       transforms: { h1: 'h2' },
@@ -86,17 +87,17 @@ describe('transformElements($content, $, { transforms })', () => {
 
   it('performs a complex transformation on matched elements', () => {
     const html = `
-    <div>
-      <div class="body">
-        <noscript>
-          <img src="/img.jpg" />
-        </noscript>
-        <noscript>
-          Something else
-        </noscript>
-        <p>Here are some words</p>
+      <div>
+        <div class="body">
+          <noscript>
+            <img src="/img.jpg" />
+          </noscript>
+          <noscript>
+            Something else
+          </noscript>
+          <p>Here are some words</p>
+        </div>
       </div>
-    </div>
     `;
     const opts = {
       transforms: {
@@ -227,5 +228,75 @@ describe('select(opts)', () => {
     const result = select(opts);
 
     assert.equal(result, null);
+  });
+
+  it('returns an array of results if allowMultiple is true', () => {
+    const html = `
+      <div><div><ul><li class="item">One</li><li class="item">Two</li></ul></div></div>
+      `;
+    const $ = cheerio.load(html);
+    const opts = {
+      type: 'items',
+      $,
+      extractionOpts: {
+        selectors: ['.item'],
+        allowMultiple: true,
+      },
+      extractHtml: true,
+    };
+
+    const result = select(opts);
+
+    assert.equal(result.length, 2);
+    assert.deepEqual(result, [
+      '<li class="item">One</li>',
+      '<li class="item">Two</li>',
+    ]);
+  });
+
+  it('makes links absolute in extended types when extracting HTML', () => {
+    const html = `
+      <div><p><a class="linky" href="/foo">Bar</a></p></div>
+    `;
+    const $ = cheerio.load(html);
+    const opts = {
+      type: 'links',
+      $,
+      url: 'http://example.com',
+      extractionOpts: {
+        selectors: ['.linky'],
+      },
+      extractHtml: true,
+    };
+
+    const result = select(opts);
+
+    assert.equal(
+      result,
+      '<div><a class="linky" href="http://example.com/foo">Bar</a></div>'
+    );
+  });
+
+  it('makes links absolute in extended types when extracting attrs', () => {
+    const html = `
+      <div><p><a class="linky" href="/foo">Bar</a><a class="linky" href="/bar">Baz</a></p></div>
+    `;
+    const $ = cheerio.load(html);
+    const opts = {
+      type: 'links',
+      $,
+      url: 'http://example.com',
+      extractionOpts: {
+        selectors: [['.linky', 'href']],
+        allowMultiple: true,
+      },
+    };
+
+    const result = select(opts);
+
+    assert.deepEqual(result, [
+      'http://example.com/foo',
+      'http://example.com/bar',
+    ]);
   });
 });

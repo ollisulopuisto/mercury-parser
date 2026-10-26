@@ -1,6 +1,5 @@
 import assert from 'assert';
 import cheerio from 'cheerio';
-import { Errors } from 'utils';
 import { getEncoding } from 'utils/text';
 
 import { record } from 'test-helpers';
@@ -23,7 +22,7 @@ describe('Resource', () => {
       const url = 'http://nytimes.com/500';
       const error = await Resource.create(url);
 
-      assert.equal(error, Errors.badUrl);
+      assert(/instructed to reject non-200/i.test(error.message));
     });
 
     it('fetches with different encoding on body', async () => {
@@ -79,6 +78,16 @@ describe('Resource', () => {
       assert.equal(badEncodingRe.test($.html()), false);
       assert.equal(typeof $, 'function');
     });
+
+    it('doesnt mangle non-ascii characters in prefetched response', async () => {
+      const url = 'https://www.gruene.de/themen/digitalisierung';
+      const prefetched =
+        '<!DOCTYPE html><html lang="de"><head><meta charSet="UTF-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/></head><body><div id="___gatsby"><h1 class="styles-module--headline--niWjO">Wir gestalten die Digitalisierung</h1><p>Wir Grüne kämpfen für ein offenes, gemeinwohlorientiertes Netz. Wir wollen den digitalen Wandel gerecht gestalten und setzen uns für Verantwortung, Freiheit und Recht im Netz ein. Netzpolitik und Digitalisierung sind zentrale politische Querschnittsaufgaben für eine moderne Gesellschaft. Im Mittelpunkt stehen für uns eine zukunftsfähige digitale Infrastruktur, der freie und gleichberechtigte Zugang zum Netz für alle, der Schutz unserer Privatsphäre und persönlichen Daten, sowie eine modernisierte  Verwaltung.</p></div></body></html>';
+
+      const $ = await Resource.create(url, prefetched);
+      assert.equal(/Gr&#xFC;ne/.test($.html()), true);
+      assert.equal(/&#xFFFD;/.test($.html()), false);
+    });
   });
 
   describe('generateDoc({ body, response })', () => {
@@ -96,6 +105,24 @@ describe('Resource', () => {
       assert.throws(() => {
         Resource.generateDoc({ body, response });
       }, /content does not appear to be text/i);
+    });
+
+    it('throws an error if the response has no Content-Type header', () => {
+      const response = {
+        headers: {},
+      };
+      const body = '';
+
+      // This assertion is more elaborate than the others to be sure that we're
+      // throwing an `Error` and not raising a runtime exception.
+      assert.throws(
+        () => {
+          Resource.generateDoc({ body, response });
+        },
+        err =>
+          err instanceof Error &&
+          /content does not appear to be text/i.test(err)
+      );
     });
 
     it('throws an error if the content has no children', () => {

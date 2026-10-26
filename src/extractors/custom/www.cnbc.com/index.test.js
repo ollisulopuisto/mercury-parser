@@ -15,9 +15,7 @@ describe('WwwCnbcComExtractor', () => {
     beforeAll(() => {
       url =
         'http://www.cnbc.com/2016/12/20/coals-us-stronghold-is-losing-steam-even-as-trump-aims-for-a-revival.html';
-      const html = fs.readFileSync(
-        './fixtures/www.cnbc.com/1482251664848.html'
-      );
+      const html = fs.readFileSync('./fixtures/www.cnbc.com.html');
       result = Mercury.parse(url, { html, fallback: false });
     });
 
@@ -71,7 +69,7 @@ describe('WwwCnbcComExtractor', () => {
       // the article.
       assert.equal(
         lead_image_url,
-        'http://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2016/12/19/104176162-GettyImages-161350847.1910x1000.jpg'
+        'https://image.cnbcfm.com/api/v1/image/104178390-RTR3H5O9.jpg?v=1529452197&w=1920&h=1080'
       );
     });
 
@@ -95,7 +93,55 @@ describe('WwwCnbcComExtractor', () => {
       // the article.
       assert.equal(
         first13,
-        'Brian Brainerd | The Denver Post | Getty Images The U.S. Mountain States'
+        'The U.S. Mountain States are moving away from coal, even as President-elect Donald'
+      );
+    });
+  });
+
+  describe('website redesign', () => {
+    let result;
+    let url;
+    beforeAll(() => {
+      url =
+        'https://www.cnbc.com/2019/03/18/heres-how-cybersecurity-vendors-drive-the-hacking-news-cycle.html';
+      const html = fs.readFileSync('./fixtures/www.cnbc.com--redesign.html');
+      result = Mercury.parse(url, { html, fallback: false });
+    });
+
+    it('returns the title', async () => {
+      // To pass this test, fill out the title selector
+      // in ./src/extractors/custom/www.cnbc.com/index.js.
+      const { title } = await result;
+
+      // Update these values with the expected values from
+      // the article.
+      assert.equal(
+        title,
+        'Desperate to get through to executives, some cybersecurity vendors are resorting to lies and blackmail'
+      );
+    });
+
+    it('returns the content', async () => {
+      // To pass this test, fill out the content selector
+      // in ./src/extractors/custom/www.cnbc.com/index.js.
+      // You may also want to make use of the clean and transform
+      // options.
+      const { content } = await result;
+
+      const $ = cheerio.load(content || '');
+
+      const first13 = excerptContent(
+        $('*')
+          .first()
+          .text(),
+        13
+      );
+
+      // Update these values with the expected values from
+      // the article.
+      assert.equal(
+        first13,
+        'The cybersecurity vendor marketplace is growing so crowded that some companies have been'
       );
     });
   });

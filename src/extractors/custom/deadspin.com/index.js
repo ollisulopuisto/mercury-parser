@@ -8,18 +8,25 @@ export const DeadspinExtractor = {
     'gizmodo.com',
     'jalopnik.com',
     'kinja.com',
+    'avclub.com',
+    'clickhole.com',
+    'splinternews.com',
+    'theonion.com',
+    'theroot.com',
+    'thetakeout.com',
+    'theinventory.com',
   ],
 
   title: {
-    selectors: ['h1.headline'],
+    selectors: ['header h1', 'h1.headline'],
   },
 
   author: {
-    selectors: ['.author'],
+    selectors: ['a[data-ga*="Author"]', '.author'],
   },
 
   content: {
-    selectors: ['.post-content', '.entry-content'],
+    selectors: ['.js_post-content', '.post-content', '.entry-content'],
 
     // Is there anything in the content you selected that needs transformed
     // before it's consumable content? E.g., unusual lazy loaded images
@@ -37,7 +44,10 @@ export const DeadspinExtractor = {
   },
 
   date_published: {
-    selectors: [['time.updated[datetime]', 'datetime']],
+    selectors: [
+      ['meta[name="article:published_time"]', 'value'],
+      ['time.updated[datetime]', 'datetime'],
+    ],
   },
 
   lead_image_url: {

@@ -14,10 +14,8 @@ describe('NYTimesExtractor', () => {
     let url;
     beforeAll(() => {
       url =
-        'http://www.nytimes.com/interactive/2016/09/15/arts/design/national-museum-of-african-american-history-and-culture.html';
-      const html = fs.readFileSync(
-        './fixtures/www.nytimes.com/1474318141888.html'
-      );
+        'https://www.nytimes.com/2016/09/20/nyregion/nyc-nj-explosions-ahmad-khan-rahami.html';
+      const html = fs.readFileSync('./fixtures/www.nytimes.com.html');
       result = Mercury.parse(url, { html, fallback: false });
     });
 
@@ -76,7 +74,7 @@ describe('NYTimesExtractor', () => {
       // the article.
       assert.equal(
         lead_image_url,
-        'https://static01.nyt.com/images/2016/09/20/nyregion/20MANHUNT1/20MANHUNT1-facebookJumbo.jpg'
+        'https://static01.nyt.com/images/2016/09/20/nyregion/Manhunt/Manhunt-facebookJumbo-v2.jpg?year=2016&h=549&w=1050&s=a40dd9bd69012d95e8a76943424679f17908af4c8f7ad3a6585e0d50632fff4b&k=ZQJBKqZ0VN'
       );
     });
 
@@ -100,35 +98,35 @@ describe('NYTimesExtractor', () => {
       // the article.
       assert.equal(
         first13,
-        'The man believed to be responsible for the explosion in Manhattan on Saturday'
+        'The man who the police said sowed terror across two states, setting off'
       );
     });
   });
 
   it('works with a feature story', async () => {
-    const html = fs.readFileSync(
-      './fixtures/www.nytimes.com/1474061823854.html'
-    );
+    const html = fs.readFileSync('./fixtures/www.nytimes.com--feature.html');
     const uri =
       'http://www.nytimes.com/interactive/2016/09/15/arts/design/national-museum-of-african-american-history-and-culture.html';
 
     const { content, title, author } = await Mercury.parse(uri, { html });
     const $ = cheerio.load(content);
-    const text = $('*')
-      .first()
-      .text()
-      .trim()
-      .slice(0, 20);
+    const text = excerptContent(
+      $('*')
+        .first()
+        .text(),
+      13
+    );
 
     assert.equal(title, 'I, Too, Sing America');
     assert.equal(author, 'The New York Times');
-    assert.equal(text, 'T he Smithsonian’s N');
+    assert.equal(
+      text,
+      'T he Smithsonian’s National Museum of African American History and Culture opens on'
+    );
   });
 
   it('returns the title on most recent articles', async () => {
-    const html = fs.readFileSync(
-      './fixtures/www.nytimes.com/1539194812689.html'
-    );
+    const html = fs.readFileSync('./fixtures/www.nytimes.com--recent.html');
     const uri =
       'https://www.nytimes.com/2018/10/09/us/politics/nikki-haley-united-nations.html';
 
