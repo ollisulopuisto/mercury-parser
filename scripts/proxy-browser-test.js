@@ -8,6 +8,18 @@ const start = () => {
   app.use('/:url', (req, res) => {
     const url = req.originalUrl.slice(1);
 
+    try {
+      const parsedUrl = new URL(url);
+      if (
+        parsedUrl.hostname !== 'www.cnn.com' &&
+        parsedUrl.hostname !== 'cnn.com'
+      ) {
+        return res.status(400).send('Bad Request');
+      }
+    } catch (e) {
+      return res.status(400).send('Bad Request');
+    }
+
     const options = {
       url,
       // Don't set encoding; fixes issues
@@ -20,7 +32,7 @@ const start = () => {
       // Follow any redirect
       followAllRedirects: true,
     };
-    req.pipe(request(options)).pipe(res);
+    return req.pipe(request(options)).pipe(res);
   });
   server = app.listen(process.env.PORT || 3000);
 };

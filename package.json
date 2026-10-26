@@ -140,7 +140,19 @@
     "browser-request"
   ],
   "resolutions": {
-    "minimist": "^1.2.6"
+    "minimist": "^1.2.6",
+    "set-value": "^2.0.1",
+    "handlebars": "^4.7.10",
+    "fsevents": "^1.2.11",
+    "@babel/traverse": "^7.23.2",
+    "cipher-base": "^1.0.5",
+    "elliptic": "^6.6.1",
+    "form-data": "^2.5.4",
+    "pbkdf2": "^3.1.3",
+    "proxy-addr": "^2.0.8",
+    "sha.js": "^2.4.12",
+    "babel-traverse": "^6.26.0",
+    "request": "^2.88.2"
   },
   "browser": {
     "main": "./dist/mercury.web.js",
@@ -164,10 +176,5 @@
       "remark .",
       "prettier --write"
     ]
-  },
-  "resolutions": {
-    "set-value": "^2.0.1",
-    "handlebars": "^4.7.10",
-    "fsevents": "^1.2.11"
   }
 }
