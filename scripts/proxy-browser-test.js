@@ -7,26 +7,21 @@ let server;
 const start = () => {
   app.use('/:url', (req, res) => {
     const url = req.originalUrl.slice(1);
-    let safeUrl;
-
+    let parsedUrl;
     try {
-      const parsedUrl = new URL(url);
-      const isAllowedHost =
-        parsedUrl.hostname === 'www.cnn.com' || parsedUrl.hostname === 'cnn.com';
-      const isAllowedProtocol =
-        parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:';
-
-      if (!isAllowedHost || !isAllowedProtocol) {
+      parsedUrl = new URL(url);
+      if (
+        parsedUrl.hostname !== 'www.cnn.com' &&
+        parsedUrl.hostname !== 'cnn.com'
+      ) {
         return res.status(400).send('Bad Request');
       }
-
-      safeUrl = parsedUrl.toString();
     } catch (e) {
       return res.status(400).send('Bad Request');
     }
 
     const options = {
-      url: safeUrl,
+      url: parsedUrl.protocol + '//' + parsedUrl.host + parsedUrl.pathname + parsedUrl.search,
       // Don't set encoding; fixes issues
       // w/gzipped responses
       encoding: null,
@@ -34,8 +29,8 @@ const start = () => {
       jar: true,
       // Accept and decode gzip
       gzip: true,
-      // Do not follow redirects to avoid SSRF via redirect targets
-      followAllRedirects: false,
+      // Follow any redirect
+      followAllRedirects: true,
     };
     return req.pipe(request(options)).pipe(res);
   });
