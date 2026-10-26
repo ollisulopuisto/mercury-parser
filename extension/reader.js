@@ -7,15 +7,58 @@
     return;
   }
 
+  function showToast(message, isError = false, timeout = 4000) {
+    const prev = document.getElementById('selkokieli-toast');
+    if (prev) prev.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'selkokieli-toast';
+    toast.className = isError
+      ? 'selkokieli-toast-error'
+      : 'selkokieli-toast-info';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    if (timeout > 0) {
+      setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+      }, timeout);
+    }
+    return toast;
+  }
+
+  const loadingToast = showToast(
+    '📖 Selkokieli: Jäsennetään sivua...',
+    false,
+    0
+  );
+
   try {
-    if (typeof Mercury === 'undefined' || !Mercury.parse) {
-      alert('Selkokieli-jäsennintä ei voitu ladata.');
+    const parser =
+      (typeof window !== 'undefined' && window.Mercury) ||
+      (typeof globalThis !== 'undefined' && globalThis.Mercury) ||
+      (typeof Mercury !== 'undefined' ? Mercury : null);
+
+    if (!parser || typeof parser.parse !== 'function') {
+      if (loadingToast.parentNode) loadingToast.remove();
+      showToast('⚠️ Selkokieli-jäsennintä ei voitu ladata.', true);
       return;
     }
 
-    const article = await Mercury.parse();
+    const currentHtml = document.documentElement
+      ? document.documentElement.outerHTML
+      : '';
+    const article = await parser.parse(window.location.href, {
+      html: currentHtml,
+    });
+
+    if (loadingToast.parentNode) loadingToast.remove();
+
     if (!article || (!article.content && !article.title)) {
-      alert('Selkokieli ei löytänyt artikkelisisältöä tältä sivulta.');
+      showToast(
+        'ℹ️ Selkokieli ei löytänyt artikkelisisältöä tältä sivulta.',
+        true
+      );
       return;
     }
 
@@ -42,7 +85,8 @@
       <div class="selkokieli-backdrop"></div>
       <div class="selkokieli-modal">
         <div class="selkokieli-toolbar">
-          <button class="selkokieli-close-btn" type="button" aria-label="Sulje lukutila">✕ Sulje</button>
+          <button class="selkokieli-btn selkokieli-theme-btn" type="button" title="Vaihda teemaa (tumma/vaalea)">🌓 Teema</button>
+          <button class="selkokieli-btn selkokieli-close-btn" type="button" aria-label="Sulje lukutila">✕ Sulje</button>
         </div>
         <header class="selkokieli-header">
           ${
@@ -96,6 +140,25 @@
       .querySelector('.selkokieli-backdrop')
       .addEventListener('click', closeHandler);
 
+    const themeBtn = overlay.querySelector('.selkokieli-theme-btn');
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = overlay.getAttribute('data-theme');
+      const isSystemDark =
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let nextTheme;
+
+      if (!currentTheme) {
+        nextTheme = isSystemDark ? 'light' : 'dark';
+      } else if (currentTheme === 'dark') {
+        nextTheme = 'light';
+      } else {
+        nextTheme = 'dark';
+      }
+
+      overlay.setAttribute('data-theme', nextTheme);
+    });
+
     document.addEventListener('keydown', function escListener(e) {
       if (e.key === 'Escape' && document.getElementById('selkokieli-overlay')) {
         closeHandler();
@@ -106,7 +169,8 @@
     document.body.appendChild(overlay);
     document.documentElement.classList.add('selkokieli-active');
   } catch (err) {
+    if (loadingToast.parentNode) loadingToast.remove();
     console.error('Selkokieli parsing error:', err);
-    alert(`Virhe sivun jäsennyksessä: ${err.message}`);
+    showToast(`⚠️ Virhe sivun jäsennyksessä: ${err.message}`, true, 6000);
   }
 })();

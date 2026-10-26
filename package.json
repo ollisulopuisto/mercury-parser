@@ -40,7 +40,7 @@
     "build:esm": "yarn lint && rollup -c rollup.config.esm.js && yarn test:build:esm",
     "build:esm:ci": "rollup -c rollup.config.esm.js && yarn test:build:esm",
     "build:web:ci": "rollup -c rollup.config.web.js && yarn test:build:web",
-    "build:extension": "rollup -c rollup.config.web.js && cp dist/mercury.web.js extension/mercury.web.js",
+    "build:extension": "rollup -c rollup.config.web.js && cp dist/mercury.web.js extension/mercury.web.js && echo ';if(typeof window!==\"undefined\"){window.Mercury=Mercury;}if(typeof globalThis!==\"undefined\"){globalThis.Mercury=Mercury;}' >> extension/mercury.web.js",
     "release": "yarn build && yarn build:web",
     "build:generator": "rollup -c scripts/rollup.config.js",
     "test_build": "rollup -c",
