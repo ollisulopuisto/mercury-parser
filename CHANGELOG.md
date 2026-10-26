@@ -1,4 +1,12 @@
-# Mercury Parser Changelog
+# Selkokieli Changelog
+
+### 2.3.0 (Oct 26, 2026)
+
+- **feat**: Renamed project to Selkokieli
+- **feat**: Added packed & unpacked Chromium browser extension with reader mode
+- **feat**: Added automatic dark/light system theme detection with manual toggle
+- **feat**: Designed custom vector & raster icon suite for extension and web
+- **chore**: Synchronized with upstream Postlight Parser v2.2.3 and updated dependencies
 
 ### 2.2.3 (Oct 24, 2022)
 
