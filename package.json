@@ -7,10 +7,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/postlight/parser.git"
+    "url": "git+https://github.com/ollisulopuisto/selkokieli.git"
   },
   "bugs": {
-    "url": "https://github.com/postlight/parser/issues"
+    "url": "https://github.com/ollisulopuisto/selkokieli/issues"
   },
   "keywords": [
     "mercury",
