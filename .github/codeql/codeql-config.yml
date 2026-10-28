@@ -1,0 +1,13 @@
+# CodeQL-konfiguraatio selkokieli-arkistolle.
+#
+# Arkistoidut kolmannen osapuolen verkkosivut tallennetaan testiosoitteiksi
+# (fixtures/ ja src/extractors/*/fixtures/). Niiden <script>-elementtien sisältämä
+# kirjastokoodi (esim. Mixpanel, Adobe AppMeasurement) on kolmannen osapuolen
+# aineistoa, jota selkokieli EI koskaan suorita: se poistetaan ennen sisällön
+# käsittelyä (src/resource/utils/dom/clean.js, src/utils/dom/strip-junk-tags.js).
+# Fixture-tiedot eivät ole osa selkokielen hyökkäyspintaa eikä niitä toimiteta
+# käyttäjille, joten ne jätetään CodeQL-skannauksen ulkopuolelle. Fixturejen
+# sisältöä ei muokata, koska se pilaaisi testidataa ilman turvahyötyä.
+path-ignoration:
+  - "fixtures/**"
+  - "src/extractors/**/fixtures/**"

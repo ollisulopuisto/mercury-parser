@@ -4,7 +4,6 @@ const { execFile, execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const URL = require('url');
-const octokit = require('@octokit/rest')();
 
 const Parser = require('../dist/mercury');
 
@@ -184,18 +183,8 @@ const createAndPushBranch = ({ branchName, commitMessage }) => {
 };
 
 const createPR = ({ branchName, title, body = '' }) => {
-  octokit.authenticate({
-    type: 'token',
-    token: process.env.GH_AUTH_TOKEN,
-  });
-
-  octokit.pulls.create({
-    owner: 'postlight',
-    repo: 'parser',
-    title,
-    head: branchName,
-    base: 'master',
-    body,
-    maintainer_can_modify: true,
-  });
+  // `@octokit/rest` poistettu riippuvuuksista (lodash.pick/lodash.set-prototyypin saastumishavainnot).
+  // Tämä legacy-bottiskripti viittaa vanhaan postlight/parser-repoon eikä kuulu selkokielen
+  // rakennus- tai testausprosessiin, joten PR:n luontia ei toteuteta täällä.
+  console.log(`createPR ohitettu: branch=${branchName} title=${title}`);
 };
