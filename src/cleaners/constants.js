@@ -74,4 +74,7 @@ export const TIME_WITH_OFFSET_RE = /-\d{3,4}$/;
 // title, that usually denote breadcrumbs or something similar.
 export const TITLE_SPLITTERS_RE = /(: | - | \| )/g;
 
-export const DOMAIN_ENDINGS_RE = new RegExp('.com$|.net$|.org$|.co.uk$', 'g');
+export const DOMAIN_ENDINGS_RE = new RegExp(
+  '\\.com$|\\.net$|\\.org$|\\.co\\.uk$',
+  'g'
+);

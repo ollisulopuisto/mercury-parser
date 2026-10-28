@@ -100,7 +100,7 @@ const updateFixture = ({ fixture, url, baseDomain }) => {
         }
         execFile('yarn', ['generate-parser', url], (err, stdout) => {
           // console.log(`stdout`, stdout);
-          const dirRe = new RegExp(`(${path.dirname(fixture)}\/\\d+\.html)`);
+          const dirRe = new RegExp(`(${path.dirname(fixture)}/\\d+\\.html)`);
           const newFixture = stdout.match(dirRe)[0];
 
           console.log(`newFixture`, newFixture);
