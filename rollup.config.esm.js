@@ -7,6 +7,15 @@ import commonjs from 'rollup-plugin-commonjs';
 export default {
   input: 'src/mercury.js',
   plugins: [
+    {
+      name: 'browser-cheerio',
+      resolveId(source) {
+        if (/cheerio-node(?:\.js)?$/.test(source)) {
+          return require.resolve('./src/shims/cheerio-query.js');
+        }
+        return null;
+      },
+    },
     babel({
       runtimeHelpers: true,
       exclude: './node_modules#<{(|*',
@@ -19,7 +28,7 @@ export default {
       browser: true,
       preferBuiltins: false,
     }),
-    terser(),
+    terser({ numWorkers: 1 }),
   ],
   treeshake: true,
   output: {

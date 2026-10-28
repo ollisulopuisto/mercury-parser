@@ -2,6 +2,19 @@
 import assert from 'assert';
 import cheerio from 'cheerio';
 
+// Always exercise the built parser locally, even when network tests are off.
+describe('Offline built parser', () => {
+  it('extracts a supplied article without fetching a live page', async () => {
+    const parser = require('../dist/mercury');
+    const result = await parser.parse('https://example.com/security-smoke', {
+      html: '<html><head><title>Offline security smoke</title></head><body><article><h1>Offline security smoke</h1><p>A useful paragraph of local article content for parser verification without a network request.</p><p>Another full sentence keeps this fixture meaningful for extraction and selector checks.</p></article></body></html>',
+    });
+    assert.equal(result.title, 'Offline security smoke');
+    assert(result.content.includes('A useful paragraph'));
+    assert(result.content.includes('Another full sentence'));
+  });
+});
+
 // don't run this on CI b/c we want to avoid network requests
 if (
   process.env.CI ||

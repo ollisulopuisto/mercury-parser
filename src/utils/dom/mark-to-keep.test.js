@@ -11,8 +11,8 @@ describe('markToKeep($)', () => {
     const $ = cheerio.load(`
       <div>
         <p>What an article</p>
-        <iframe src="https://www.youtube.com/embed/_2AqQV8wDvY" frameborder="0" allowfullscreen></iframe>
-        <iframe src="foo" frameborder="0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/_2AqQV8wDvY" frameborder="0" allowfullscreen=""></iframe>
+        <iframe src="foo" frameborder="0" allowfullscreen=""></iframe>
         <iframe src="https://player.vimeo.com/video/57712615"></iframe>
       </div>
     `);
@@ -27,8 +27,8 @@ describe('markToKeep($)', () => {
         `
         <div>
           <p>What an article</p>
-          <iframe src="https://www.youtube.com/embed/_2AqQV8wDvY" frameborder="0" allowfullscreen class="mercury-parser-keep"></iframe>
-          <iframe src="foo" frameborder="0" allowfullscreen></iframe>
+          <iframe src="https://www.youtube.com/embed/_2AqQV8wDvY" frameborder="0" allowfullscreen="" class="mercury-parser-keep"></iframe>
+          <iframe src="foo" frameborder="0" allowfullscreen=""></iframe>
           <iframe src="https://player.vimeo.com/video/57712615" class="mercury-parser-keep"></iframe>
         </div>
     `

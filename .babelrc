@@ -11,13 +11,26 @@
           "./resource": "resource",
           "./extractors": "extractors",
           "./test-helpers.js": "test-helpers",
-          "./mercury.js": "mercury"
-        }
+          "./mercury.js": "mercury",
+          "^cheerio$": "./src/shims/cheerio-node"
+        },
+        "cwd": "babelrc"
       }
     ]
   ],
   "env": {
     "development": {
+      "plugins": [
+        [
+          "@babel/plugin-transform-runtime",
+          {
+            "corejs": 2,
+            "regenerator": true
+          }
+        ]
+      ]
+    },
+    "test": {
       "plugins": [
         [
           "@babel/plugin-transform-runtime",

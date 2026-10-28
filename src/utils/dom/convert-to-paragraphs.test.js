@@ -27,8 +27,8 @@ describe('convertToParagraphs($)', () => {
           <span>This should remain in a p</span>
         <p>
           This should be wrapped in a p
-        </p><p>This should become a p</p>
-        </p> <p>This should become a p</p>
+        </p></p><p>This should become a p</p>
+        <p></p> <p>This should become a p</p>
       `;
       let $ = cheerio.load(before);
       $ = convertToParagraphs($);

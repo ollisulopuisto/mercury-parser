@@ -22,26 +22,15 @@ describe('cleanTags($)', () => {
     const result = cleanTags($('*').first(), $);
     // again small adjustments for cheerio vs. jquery implementation quirks
     // not functionally significant
+    // htmlparser2 now closes the invalid p/ul nesting like a browser.
     assertClean(
       result.html(),
-      cheerio.browser
-        ? `
-          <div score="5">
-            <p>What do you think?</p>
-            <p>
-            </p>
-            <p></p>
-            <p>What do you think?</p>
-          </div>
-        `
-        : `
-          <div score="5">
-            <p>What do you think?</p>
-            <p>
-            </p>
-            <p>What do you think?</p>
-          </div>
-        `
+      `<div score="5">
+        <p>What do you think?</p>
+        <p> </p>
+        <p></p>
+        <p>What do you think?</p>
+      </div>`
     );
   });
 

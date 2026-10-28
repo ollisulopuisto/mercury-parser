@@ -1,12 +1,21 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 import globals from 'rollup-plugin-node-globals';
-import { uglify } from 'rollup-plugin-uglify'; // eslint-disable-line import/extensions
+import { terser } from 'rollup-plugin-terser'; // eslint-disable-line import/extensions
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 
 export default {
   input: 'src/mercury.js',
   plugins: [
+    {
+      name: 'browser-cheerio',
+      resolveId(source) {
+        if (/cheerio-node(?:\.js)?$/.test(source)) {
+          return require.resolve('./src/shims/cheerio-query.js');
+        }
+        return null;
+      },
+    },
     babel({
       runtimeHelpers: true,
       exclude: './node_modules#<{(|*',
@@ -19,7 +28,7 @@ export default {
       browser: true,
       preferBuiltins: false,
     }),
-    uglify(),
+    terser({ numWorkers: 1 }),
   ],
   treeshake: true,
   output: {
