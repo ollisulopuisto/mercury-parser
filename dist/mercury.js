@@ -6318,7 +6318,7 @@ var TIME_WITH_OFFSET_RE = /-\d{3,4}$/; // CLEAN TITLE CONSTANTS
 // title, that usually denote breadcrumbs or something similar.
 
 var TITLE_SPLITTERS_RE = /(: | - | \| )/g;
-var DOMAIN_ENDINGS_RE = new RegExp('.com$|.net$|.org$|.co.uk$', 'g');
+var DOMAIN_ENDINGS_RE = new RegExp('\\.com$|\\.net$|\\.org$|\\.co\\.uk$', 'g');
 
 // just the name(s): 'David Smith'.
 
