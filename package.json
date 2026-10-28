@@ -57,7 +57,7 @@
     "node": ">=10"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
+    "@babel/core": "7.29.6",
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
@@ -82,7 +82,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.12.3",
-    "express": "^4.16.4",
+    "express": "4.22.0",
     "husky": "^3.0.0",
     "inquirer": "^7.0.0",
     "jasmine-core": "^2.5.2",
@@ -115,7 +115,7 @@
     "watchify": "^3.11.1"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.2.0",
+    "@babel/runtime-corejs2": "7.26.10",
     "@postlight/ci-failed-test-reporter": "^1.0",
     "browser-request": "github:postlight/browser-request#feat-add-headers-to-response",
     "cheerio": "1.0.0-rc.12",
@@ -190,6 +190,7 @@
     "request": "^2.88.2",
     "set-value": "^2.0.1",
     "sha.js": "^2.4.12",
-    "shell-quote": "^1.12.0"
+    "shell-quote": "^1.12.0",
+    "ajv": "6.15.0"
   }
 }
