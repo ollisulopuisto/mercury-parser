@@ -1,7 +1,7 @@
 import URL from 'url';
 import wuzzy from 'wuzzy';
 
-import { TITLE_SPLITTERS_RE, DOMAIN_ENDINGS_RE } from './constants';
+import { TITLE_SPLITTERS_RE, stripDomainEnding } from './constants';
 
 function extractBreadcrumbTitle(splitTitle, text) {
   // This must be a very breadcrumbed title, like:
@@ -59,7 +59,7 @@ function cleanDomainFromTitle(splitTitle, url) {
   // Strip out the big TLDs - it just makes the matching a bit more
   // accurate. Not the end of the world if it doesn't strip right.
   const { host } = URL.parse(url);
-  const nakedDomain = host.replace(DOMAIN_ENDINGS_RE, '');
+  const nakedDomain = stripDomainEnding(host);
 
   const startSlug = splitTitle[0].toLowerCase().replace(' ', '');
   const startSlugRatio = wuzzy.levenshtein(startSlug, nakedDomain);

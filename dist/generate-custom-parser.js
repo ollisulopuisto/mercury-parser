@@ -6349,7 +6349,18 @@ var TIME_WITH_OFFSET_RE = /-\d{3,4}$/; // CLEAN TITLE CONSTANTS
 // title, that usually denote breadcrumbs or something similar.
 
 var TITLE_SPLITTERS_RE = /(: | - | \| )/g;
-var DOMAIN_ENDINGS_RE = new RegExp('\\.com$|\\.net$|\\.org$|\\.co\\.uk$', 'g'); // just the name(s): 'David Smith'.
+var DOMAIN_ENDINGS = ['.co.uk', '.com', '.net', '.org'];
+
+// Removes a known domain ending from a hostname, e.g. "example.com"
+// becomes "example". An explicit list is used instead of a regexp so
+// every valid TLD does not have to be enumerated
+// (js/incomplete-hostname-regexp).
+function stripDomainEnding(host) {
+  var ending = DOMAIN_ENDINGS.find(function (domainEnding) {
+    return host.endsWith(domainEnding);
+  });
+  return ending ? host.slice(0, host.length - ending.length) : host;
+}
 
 function cleanAuthor(author) {
   return normalizeSpaces$1(author.replace(CLEAN_AUTHOR_RE, '$2').trim());
@@ -6552,7 +6563,7 @@ function cleanDomainFromTitle(splitTitle, url) {
   var _URL$parse = URL$1.parse(url),
       host = _URL$parse.host;
 
-  var nakedDomain = host.replace(DOMAIN_ENDINGS_RE, '');
+  var nakedDomain = stripDomainEnding(host);
   var startSlug = splitTitle[0].toLowerCase().replace(' ', '');
   var startSlugRatio = wuzzy$1.levenshtein(startSlug, nakedDomain);
 

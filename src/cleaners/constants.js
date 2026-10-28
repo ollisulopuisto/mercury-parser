@@ -74,7 +74,19 @@ export const TIME_WITH_OFFSET_RE = /-\d{3,4}$/;
 // title, that usually denote breadcrumbs or something similar.
 export const TITLE_SPLITTERS_RE = /(: | - | \| )/g;
 
-export const DOMAIN_ENDINGS_RE = new RegExp(
-  '\\.com$|\\.net$|\\.org$|\\.co\\.uk$',
-  'g'
-);
+// Common domain endings stripped from hostnames when titles are
+// compared against the page URL. Kept as an explicit list instead of
+// a regular expression: a hostname regular expression can never cover
+// every valid TLD, so a regex-based check is flagged as an incomplete
+// hostname regexp (js/incomplete-hostname-regexp).
+export const DOMAIN_ENDINGS = ['.co.uk', '.com', '.net', '.org'];
+
+// Removes a known domain ending from a hostname, e.g. "example.com"
+// becomes "example". Hostnames without a known ending are returned
+// unchanged.
+export function stripDomainEnding(host) {
+  const ending = DOMAIN_ENDINGS.find(domainEnding =>
+    host.endsWith(domainEnding)
+  );
+  return ending ? host.slice(0, host.length - ending.length) : host;
+}
