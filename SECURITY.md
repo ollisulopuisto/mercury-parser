@@ -31,12 +31,12 @@ lodash 4.x is end-of-life and there is no upstream fix for prototype pollution i
 
 All CodeQL findings live inside **archived third-party webpage content stored as test fixtures**:
 
-| Rule                                     | File                                                           | Occurrences | Disposition            |
-| ---------------------------------------- | -------------------------------------------------------------- | ----------- | ---------------------- |
-| js/incomplete-sanitization               | `fixtures/www.vulture.com--content-test.html:10626`            | 2           | Excluded from scanning |
-| js/incomplete-url-scheme-check           | `src/extractors/custom/nymag.com/fixtures/test.html:2915–2916` | 2           | Excluded from scanning |
-| js/incomplete-url-substring-sanitization | `src/extractors/custom/nymag.com/fixtures/test.html:2914–2915` | 5           | Excluded from scanning |
+| Rule                                     | File                                                           | Occurrences | Disposition             |
+| ---------------------------------------- | -------------------------------------------------------------- | ----------- | ----------------------- |
+| js/incomplete-sanitization               | `fixtures/www.vulture.com--content-test.html:10626`            | 2           | Out of scope / excluded |
+| js/incomplete-url-scheme-check           | `src/extractors/custom/nymag.com/fixtures/test.html:2915–2916` | 2           | Out of scope / excluded |
+| js/incomplete-url-substring-sanitization | `src/extractors/custom/nymag.com/fixtures/test.html:2914–2915` | 5           | Out of scope / excluded |
 
 This content (e.g. the Mixpanel library and Adobe AppMeasurement) is archived publisher page code inside `<script>` elements. selkokieli **strips all `<script>` elements before any content processing** — this is implemented and tested in `src/resource/utils/dom/clean.js` ("removes script elements") and `src/utils/dom/strip-junk-tags.js`. The flagged code is therefore never executed and is not part of selkokieli's attack surface.
 
-The fixture findings are excluded from CodeQL scanning via `.github/codeql/codeql-config.yml` (`path-ignoration` for `fixtures/**` and `src/extractors/**/fixtures/**`). Fixture content representing real-world archived pages is not modified, since altering archived third-party fixture data would corrupt test data without improving security.
+The findings describe issues in archived third-party page code stored as test fixtures, not in selkokieli source. Fixture content representing real-world archived pages is not modified, since altering archived third-party fixture data would corrupt test data without improving security. Instead the fixture paths are excluded from CodeQL scanning via `.github/codeql/codeql-config.yml` (`paths-ignore` for `fixtures/**` and `src/extractors/**/fixtures/**`), applied by the `.github/workflows/codeql.yml` analysis workflow.

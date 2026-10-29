@@ -8,6 +8,6 @@
 # Fixture-tiedot eivät ole osa selkokielen hyökkäyspintaa eikä niitä toimiteta
 # käyttäjille, joten ne jätetään CodeQL-skannauksen ulkopuolelle. Fixturejen
 # sisältöä ei muokata, koska se pilaaisi testidataa ilman turvahyötyä.
-path-ignoration:
+paths-ignore:
   - "fixtures/**"
   - "src/extractors/**/fixtures/**"
