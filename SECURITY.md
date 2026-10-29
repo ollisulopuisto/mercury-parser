@@ -40,3 +40,14 @@ All CodeQL findings live inside **archived third-party webpage content stored as
 This content (e.g. the Mixpanel library and Adobe AppMeasurement) is archived publisher page code inside `<script>` elements. selkokieli **strips all `<script>` elements before any content processing** — this is implemented and tested in `src/resource/utils/dom/clean.js` ("removes script elements") and `src/utils/dom/strip-junk-tags.js`. The flagged code is therefore never executed and is not part of selkokieli's attack surface.
 
 The findings describe issues in archived third-party page code stored as test fixtures, not in selkokieli source. Fixture content representing real-world archived pages is not modified, since altering archived third-party fixture data would corrupt test data without improving security. Instead the fixture paths are excluded from CodeQL scanning via `.github/codeql/codeql-config.yml` (`paths-ignore` for `fixtures/**` and `src/extractors/**/fixtures/**`), applied by the `.github/workflows/codeql.yml` analysis workflow.
+
+
+### Follow-up verification (2026-10-29)
+
+The two exact archived pages above now have regression tests in
+`src/resource/utils/dom/clean.test.js`. Each test first requires the original
+publisher scripts to remain in the fixture, then runs the production cleaner
+and checks that no script elements remain while article text is retained.
+These tests do not remove fixture content, exclude scanner paths, or dismiss
+alerts. Existing scan exclusions are not evidence that the findings are closed.
+The current CodeQL alert status could not be read with the available access.
