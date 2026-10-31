@@ -41,6 +41,7 @@ This content (e.g. the Mixpanel library and Adobe AppMeasurement) is archived pu
 
 The findings describe issues in archived third-party page code stored as test fixtures, not in selkokieli source. Fixture content representing real-world archived pages is not modified, since altering archived third-party fixture data would corrupt test data without improving security. Instead the fixture paths are excluded from CodeQL scanning via `.github/codeql/codeql-config.yml` (`paths-ignore` for `fixtures/**` and `src/extractors/**/fixtures/**`), applied by the `.github/workflows/codeql.yml` analysis workflow.
 
+Note: CodeQL **default setup** was disabled on this repository (state: `not-configured`) because it conflicts with the advanced configuration workflow. With default setup enabled, GitHub rejects SARIF from advanced configurations (`CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled`), so no re-scan could run and the fixture alerts could not be closed. Disabling default setup lets the advanced workflow run with `paths-ignore`, so subsequent scans no longer flag the fixtures.
 
 ### Follow-up verification (2026-10-29)
 
